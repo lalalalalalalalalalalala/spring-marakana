@@ -99,7 +99,7 @@ public class AddressRepository {
 			try {
 
 				statement.executeUpdate(
-						"insert into address values (street, city, state, zip) values ('"
+						"insert into address (street, city, state, zip) values ('"
 								+ address.getStreet() + "', '"
 								+ address.getCity() + "', '"
 								+ address.getState() + "', '"
