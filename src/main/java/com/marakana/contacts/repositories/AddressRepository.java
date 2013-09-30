@@ -34,7 +34,6 @@ public class AddressRepository {
 
 	public void init() throws SQLException {
 		Connection connection = ds.getConnection();
-
 		try {
 			Statement statement = connection.createStatement();
 
@@ -52,12 +51,9 @@ public class AddressRepository {
 	}
 
 	public Address find(long id) throws SQLException {
-
 		Connection connection = ds.getConnection();
-
 		try {
 			Statement statement = connection.createStatement();
-
 			try {
 				ResultSet results = statement
 						.executeQuery("select * from address whereid = " + id);
@@ -84,26 +80,87 @@ public class AddressRepository {
 		}
 	}
 
-
-	private Address unmarshal(ResultSet results) throws SQLException{
+	private Address unmarshal(ResultSet results) throws SQLException {
 		Address address = new Address();
 		address.setId(results.getLong("id"));
 		address.setStreet(results.getString("street"));
 		address.setCity(results.getString("city"));
 		address.setState(results.getString("state"));
 		address.setZip(results.getString("zip"));
-		
+
 		return address;
-		
-		
+
 	}
 
 	public void create(Address address) throws SQLException {
+		Connection connection = ds.getConnection();
+		try {
+			Statement statement = connection.createStatement();
+			try {
+
+				statement.executeUpdate(
+						"insert into address values (street, city, state, zip) values ('"
+								+ address.getStreet() + "', '"
+								+ address.getCity() + "', '"
+								+ address.getState() + "', '"
+								+ address.getZip() + "')",
+						Statement.RETURN_GENERATED_KEYS);
+				ResultSet generatedKeys = statement.getGeneratedKeys();
+
+				try {
+					if (generatedKeys.next())
+						address.setId(generatedKeys.getLong("id"));
+				} finally {
+
+					generatedKeys.close();
+				}
+
+			} finally {
+				statement.close();
+			}
+
+		} finally {
+			connection.close();
+		}
+	}
+
+	public void update(Address address) throws SQLException {
+		Connection connection = ds.getConnection();
+		try {
+			Statement statement = connection.createStatement();
+			try {
+
+				statement.executeUpdate(
+						"update address set street='" + address.getStreet() 
+						+ "', city='" + address.getCity() 
+						+ "', state='" + address.getState() 
+						+ "', zip='" + address.getZip() 
+						+ "' where id=" + address.getId());
+
+			} finally {
+				statement.close();
+			}
+
+		} finally {
+			connection.close();
+		}		
 
 	}
 
 	public void delete(Address address) throws SQLException {
+		Connection connection = ds.getConnection();
+		try {
+			Statement statement = connection.createStatement();
+			try {
+				statement.executeUpdate(
+						"delete from addresss where id=" + address.getId());
+			} finally {
+				statement.close();
+			}
 
+		} finally {
+			connection.close();
+		}	
 	}
 
 }
